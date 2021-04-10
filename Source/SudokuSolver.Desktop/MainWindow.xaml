@@ -1,0 +1,137 @@
+﻿<Window x:Class="SudokuSolver.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:SudokuSolver.Desktop.Converters"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        mc:Ignorable="d"
+        Background="LightGray"
+        Title="Sudoku Solver"
+        Height="650"
+        Width="800">
+
+    <Window.InputBindings>
+        <KeyBinding Key="D1" Command="{Binding Set1}" />
+        <KeyBinding Key="D2" Command="{Binding Set2}" />
+        <KeyBinding Key="D3" Command="{Binding Set3}" />
+        <KeyBinding Key="D4" Command="{Binding Set4}" />
+        <KeyBinding Key="D5" Command="{Binding Set5}" />
+        <KeyBinding Key="D6" Command="{Binding Set6}" />
+        <KeyBinding Key="D7" Command="{Binding Set7}" />
+        <KeyBinding Key="D8" Command="{Binding Set8}" />
+        <KeyBinding Key="D9" Command="{Binding Set9}" />
+        <KeyBinding Key="Delete" Command="{Binding ClearCell}" />
+        <KeyBinding Key="C" Command="{Binding ClearAll}" />
+    </Window.InputBindings>
+
+
+    <Window.Resources>
+
+        <!--  Converters  -->
+        <converters:CellContentConverter x:Key="CellContentConverter" />
+        <converters:MarginConverter x:Key="MarginConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+
+        <!--  Styles  -->
+        <Style x:Key="CellStyle" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"                  
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="GhostWhite" />
+            <Setter Property="BorderThickness" Value="0.4" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightSkyBlue" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="LightSteelBlue" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"                  
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="GhostWhite" />
+            <Setter Property="FontFamily" Value="Microsoft JhengHei Light" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightSkyBlue" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="SkyBlue" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Data Templates  -->  
+        <DataTemplate x:Key="ItemTemplate">
+            <ToggleButton Height="50"
+                          Width="50"
+                          Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource MarginConverter}, ConverterParameter=Cell}"
+                          FontFamily="Microsoft JhengHei Light"
+                          FontSize="35"
+                          Style="{DynamicResource CellStyle}"
+                          IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                          Content="{Binding Value, Converter={StaticResource CellContentConverter}, Mode=TwoWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="RowDataTemplate">
+            <Grid Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource MarginConverter}, ConverterParameter=Row}">
+                <ItemsControl ItemsSource="{Binding}" ItemTemplate="{DynamicResource ItemTemplate}" AlternationCount="256">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <StackPanel x:Name="FieldGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ItemsControl x:Name="Rows" ItemTemplate="{DynamicResource RowDataTemplate}" AlternationCount="256" ItemsSource="{Binding Items}"/>
+            <Button Width="200"
+                    Height="40"
+                    Margin="10"
+                    FontSize="25"
+                    BorderThickness="0.4"
+                    Command="{Binding SolveCommand}"
+                    Style="{DynamicResource ButtonStyle}"
+                    Content="Solve" />
+        </StackPanel>
+        <Grid x:Name="BusyBackground"
+              Background="WhiteSmoke"
+              Opacity="0.8"
+              Visibility="{Binding IsBusy,  Converter={StaticResource BooleanToVisibilityConverter}}">
+        </Grid>
+        <syncfusion:SfBusyIndicator AnimationType="HorizontalPulsingBox"
+                                    Foreground="Black"
+                                    FontSize="30"
+                                    Header="Solving..."
+                                    IsBusy="{Binding IsBusy}"
+                                    ViewboxHeight="200"
+                                    Visibility="{Binding IsBusy,  Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</Window>
