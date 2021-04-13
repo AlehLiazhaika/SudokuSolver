@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AlgorithmX.Contracts\AlgorithmX.Contracts.csproj" />
+    <ProjectReference Include="..\Algorithms.Contracts\Algorithms.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

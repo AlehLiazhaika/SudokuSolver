@@ -2,7 +2,7 @@
 using System.Linq;
 using EnsureThat;
 
-namespace SudokuSolver.Core.Models
+namespace SudokuSolver.Core.Contracts.Models
 {
     public class Cell
     {
@@ -29,7 +29,7 @@ namespace SudokuSolver.Core.Models
         {
         }
 
-        internal Cell(ISet<Condition> conditions)
+        public Cell(ISet<Condition> conditions)
         {
             Ensure.That(conditions, nameof(conditions)).IsNotNull();
             Ensure.Collection.SizeIs(conditions, 4);
@@ -42,7 +42,7 @@ namespace SudokuSolver.Core.Models
 
         public bool HasConflictWith(Cell cell) => GetSatisfiedConditions().Intersect(cell.GetSatisfiedConditions()).Any();
 
-        internal ISet<Condition> GetSatisfiedConditions() =>
+        public ISet<Condition> GetSatisfiedConditions() =>
             new HashSet<Condition>(
                 new Condition[]
                 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using EnsureThat;
 
-namespace SudokuSolver.Core.Models
+namespace SudokuSolver.Core.Contracts.Models
 {
-    internal enum ConditionType
+    public enum ConditionType
     {
         Row,
         Column,
@@ -11,7 +11,7 @@ namespace SudokuSolver.Core.Models
         Box
     }
 
-    internal class Condition
+    public class Condition
     {
         public ConditionType Type { get; }
         public (int, int) Value { get; }

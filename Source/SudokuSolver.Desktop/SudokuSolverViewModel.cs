@@ -2,18 +2,21 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using EnsureThat;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using SudokuSolver.Core.Models;
+using SudokuSolver.Core.Contracts;
+using SudokuSolver.Core.Contracts.Models;
 using SudokuSolver.Desktop.ViewModels;
 
 namespace SudokuSolver.Desktop
 {
     public class SudokuSolverViewModel : ReactiveObject
     {
+        private readonly ISudokuSolverService _sudokuSolverService;
+
         [Reactive] public bool IsBusy { get; set; }
         public List<List<CellViewModel>> Items { get; set; }
-        public SudokuSolver.Core.SudokuSolver SudokuSolver = new SudokuSolver.Core.SudokuSolver(3, new AlgorithmX.AlgorithmX());
 
         public ICommand SolveCommand { get; }
 
@@ -29,10 +32,13 @@ namespace SudokuSolver.Desktop
         public ICommand ClearCell { get; }
         public ICommand ClearAll { get; }
 
-        public SudokuSolverViewModel()
+        public SudokuSolverViewModel(ISudokuSolverService sudokuSolverService)
         {
-            InitializeField();
+            Ensure.That(sudokuSolverService, nameof(sudokuSolverService)).IsNotNull();
 
+            _sudokuSolverService = sudokuSolverService;
+
+            InitializeField();
 
             SolveCommand = ReactiveCommand.Create(Solve);
 
@@ -151,7 +157,7 @@ namespace SudokuSolver.Desktop
                 .Select(x => new Cell(3, x.Row, x.Column, x.Value))
                 .ToList();
 
-            var result = await Task.Run(() => SudokuSolver.Solve(new HashSet<Cell>(filledCells)));
+            var result = await Task.Run(() => _sudokuSolverService.Solve(3, new HashSet<Cell>(filledCells)));
 
             foreach (var cell in result)
             {

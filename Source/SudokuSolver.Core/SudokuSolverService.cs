@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Algorithms.Contracts;
 using EnsureThat;
-using SudokuSolver.Core.Models;
+using SudokuSolver.Core.Contracts;
+using SudokuSolver.Core.Contracts.Models;
 
 namespace SudokuSolver.Core
 {
-    public class SudokuSolver : ISudokuSolver // TODO internal
+    internal class SudokuSolverService : ISudokuSolverService
     {
-        private readonly AlgorithmX.AlgorithmX _algorithmX;
-        private readonly int _dimensionality;
+        private readonly IAlgorithmX _algorithmX;
 
-        public SudokuSolver(int dimensionality, AlgorithmX.AlgorithmX algorithmX) // Replace with interfaces (Ioc, DI) 
+        public SudokuSolverService(IAlgorithmX algorithmX)
         {
-            Ensure.That(dimensionality, nameof(dimensionality)).IsGt(0);
             Ensure.That(algorithmX, nameof(algorithmX)).IsNotNull();
 
             _algorithmX = algorithmX;
-            _dimensionality = dimensionality;
         }
 
-        public ISet<Cell> Solve(ISet<Cell> knownCells)
+        public ISet<Cell> Solve(int dimensionality, ISet<Cell> knownCells)
         {
-            var N = (int)Math.Pow(_dimensionality, 2);
+            Ensure.That(dimensionality, nameof(dimensionality)).IsGt(0);
+
+            var N = (int)Math.Pow(dimensionality, 2);
             var allCells = GetAllCells();
             var allConditions = GetAllPossibleConditions();
 
@@ -66,7 +67,7 @@ namespace SudokuSolver.Core
                     {
                         for (int k = 1; k <= N; ++k)
                         {
-                            result.Add(new Cell(_dimensionality, (i, j, k)));
+                            result.Add(new Cell(dimensionality, (i, j, k)));
                         }
                     }
                 }

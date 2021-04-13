@@ -1,11 +1,11 @@
-﻿using AlgorithmX.Contracts;
+﻿using Algorithms.Contracts;
+using Algorithms.Utils;
 using System.Collections.Generic;
 using System.Linq;
-using AlgorithmX.Utils;
 
-namespace AlgorithmX
+namespace Algorithms
 {
-    public sealed class AlgorithmX : IAlgorithmX //TODO internal
+    internal sealed class AlgorithmX : IAlgorithmX
     {
         public ICollection<ISet<T>> Solve<T>(ISet<T> setX, ICollection<ISet<T>> collectionS)
         {

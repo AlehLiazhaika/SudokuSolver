@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace AlgorithmX.Utils
+namespace Algorithms.Utils
 {
     internal class IncidenceMatrix<T>
     {

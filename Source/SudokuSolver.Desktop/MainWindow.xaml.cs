@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Ninject;
 
 namespace SudokuSolver.Desktop
 {
@@ -10,7 +11,10 @@ namespace SudokuSolver.Desktop
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new SudokuSolverViewModel();
+
+            var kernel = new StandardKernel();
+            kernel.Load("*.dll");
+            DataContext = kernel.Get<SudokuSolverViewModel>();
         }
     }
 }
