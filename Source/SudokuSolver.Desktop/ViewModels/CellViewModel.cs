@@ -25,5 +25,8 @@ namespace SudokuSolver.Desktop.ViewModels
             Value = value;
             Box = boxDimensionality * (row / boxDimensionality) + column / boxDimensionality;
         }
+
+        public void Clear() => Value = 0;
+        public void Deselect() => IsSelected = false;
     }
 }

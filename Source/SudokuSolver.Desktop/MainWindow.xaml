@@ -12,17 +12,17 @@
         Width="800">
 
     <Window.InputBindings>
-        <KeyBinding Key="D1" Command="{Binding Set1}" />
-        <KeyBinding Key="D2" Command="{Binding Set2}" />
-        <KeyBinding Key="D3" Command="{Binding Set3}" />
-        <KeyBinding Key="D4" Command="{Binding Set4}" />
-        <KeyBinding Key="D5" Command="{Binding Set5}" />
-        <KeyBinding Key="D6" Command="{Binding Set6}" />
-        <KeyBinding Key="D7" Command="{Binding Set7}" />
-        <KeyBinding Key="D8" Command="{Binding Set8}" />
-        <KeyBinding Key="D9" Command="{Binding Set9}" />
-        <KeyBinding Key="Delete" Command="{Binding ClearCell}" />
-        <KeyBinding Key="C" Command="{Binding ClearAll}" />
+        <KeyBinding Key="D1" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D2" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D3" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D4" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D5" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D6" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D7" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D8" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="D9" Command="{Binding SetValuesCommand}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Key}" />
+        <KeyBinding Key="Delete" Command="{Binding ClearCellsCommand}" />
+        <KeyBinding Key="C" Command="{Binding ClearFieldCommand}" />
     </Window.InputBindings>
 
 
@@ -111,7 +111,7 @@
 
     <Grid>
         <StackPanel x:Name="FieldGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <ItemsControl x:Name="Rows" ItemTemplate="{DynamicResource RowDataTemplate}" AlternationCount="256" ItemsSource="{Binding Items}"/>
+            <ItemsControl x:Name="Rows" ItemTemplate="{DynamicResource RowDataTemplate}" AlternationCount="256" ItemsSource="{Binding Field}"/>
             <Button Width="200"
                     Height="40"
                     Margin="10"
@@ -121,11 +121,12 @@
                     Style="{DynamicResource ButtonStyle}"
                     Content="Solve" />
         </StackPanel>
+
         <Grid x:Name="BusyBackground"
               Background="WhiteSmoke"
               Opacity="0.8"
-              Visibility="{Binding IsBusy,  Converter={StaticResource BooleanToVisibilityConverter}}">
-        </Grid>
+              Visibility="{Binding IsBusy,  Converter={StaticResource BooleanToVisibilityConverter}}" />
+
         <syncfusion:SfBusyIndicator AnimationType="HorizontalPulsingBox"
                                     Foreground="Black"
                                     FontSize="30"

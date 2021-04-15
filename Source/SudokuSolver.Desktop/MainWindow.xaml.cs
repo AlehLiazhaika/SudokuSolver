@@ -12,7 +12,7 @@ namespace SudokuSolver.Desktop
         {
             InitializeComponent();
 
-            var kernel = new StandardKernel();
+            var kernel = new StandardKernel(); // TODO Move into App.xaml.cs
             kernel.Load("*.dll");
             DataContext = kernel.Get<SudokuSolverViewModel>();
         }
