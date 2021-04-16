@@ -50,13 +50,6 @@ namespace Algorithms.Utils
                 }
             }
         }
-
-        internal Column<T> GetShortestVisibleColumn()
-        {
-            var shortestValue = VisibleColumns.Min(x => x.Rows.Count);
-
-            return VisibleColumns.First(x => x.Rows.Count == shortestValue);
-        }
     }
 
     internal abstract class Visible
@@ -69,9 +62,7 @@ namespace Algorithms.Utils
     internal class Row<T> : Visible
     {
         internal ISet<T> Items { get; }
-
         internal ICollection<Column<T>> Columns { get; } = new Collection<Column<T>>();
-
         internal Row(ISet<T> items) => Items = items;
     }
 
@@ -79,7 +70,6 @@ namespace Algorithms.Utils
     {
         internal T Item { get; }
         internal ICollection<Row<T>> Rows { get; } = new Collection<Row<T>>();
-
         internal Column(T item) => Item = item;
     }
 }

@@ -2,78 +2,48 @@
 using Algorithms.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using Algorithms.Extensions;
 
 namespace Algorithms
 {
     internal sealed class AlgorithmX : IAlgorithmX
     {
-        public ICollection<ISet<T>> Solve<T>(ISet<T> setX, ICollection<ISet<T>> collectionS)
+        public ICollection<ISet<T>> Solve<T>(ISet<T> setX, ICollection<ISet<T>> collectionS) =>
+            GetSolution(new IncidenceMatrix<T>(setX, collectionS));
+
+        private static ICollection<ISet<T>> GetSolution<T>(IncidenceMatrix<T> incidenceMatrix) //TODO add exceptions handling
         {
-            var incidenceMatrix = new IncidenceMatrix<T>(setX, collectionS);
-            var solutionStack = new Stack<ISet<T>>();
-
-            DoIteration();
-
-            return solutionStack.ToArray();
-
-            
-            bool DoIteration() //TODO Rename, change return type, add exceptions handling
+            if (incidenceMatrix.VisibleRows.Any())
             {
-                if (!incidenceMatrix.VisibleColumns.Any())
+                var currentColumn = incidenceMatrix.VisibleColumns.OrderBy(x => x.Rows.Count(y => y.IsVisible)).First();
+
+                foreach (var row in currentColumn.Rows.Where(x => x.IsVisible))
                 {
-                    solutionStack.ToArray();
-                    return true;
-                }
-                else
-                {
-                    if (incidenceMatrix.VisibleRows.Any())
+                    var adjacentColumns = incidenceMatrix.VisibleColumns.Where(x => row.Items.Contains(x.Item)).ToList();
+                    var adjacentRows = incidenceMatrix.VisibleRows.Where(x => x.Items.Intersect(row.Items).Any()).ToList();
+
+                    adjacentColumns.Hide();
+                    adjacentRows.Hide();
+
+                    if (!incidenceMatrix.VisibleColumns.Any())
                     {
-                        var currentColumn = incidenceMatrix.GetShortestVisibleColumn();
-
-                        foreach (var row in currentColumn.Rows.Where(x => x.IsVisible))
-                        {
-                            solutionStack.Push(row.Items);
-
-                            var columnsToHide =
-                                incidenceMatrix.VisibleColumns.Where(x => row.Items.Contains(x.Item)).ToList();
-
-                            var rowsToHide =
-                                incidenceMatrix.VisibleRows.Where(x => x.Items.Intersect(row.Items).Any()).ToList();
-
-                            HideAll(columnsToHide);
-                            HideAll(rowsToHide);
-
-                            if (DoIteration())
-                            {
-                                return true;
-                            }
-
-                            solutionStack.Pop();
-
-                            ShowAll(columnsToHide);
-                            ShowAll(rowsToHide);
-                        }
+                        return new List<ISet<T>> { row.Items };
                     }
 
-                    return false;
+                    var solution = GetSolution(incidenceMatrix);
+
+                    if (solution.Count > 0)
+                    {
+                        solution.Add(row.Items);
+                        return solution;
+                    }
+
+                    adjacentColumns.Show();
+                    adjacentRows.Show();
                 }
             }
 
-            void HideAll(IEnumerable<Visible> source)
-            {
-                foreach (var item in source)
-                {
-                    item.Hide();
-                }
-            }
-
-            void ShowAll(IEnumerable<Visible> source)
-            {
-                foreach (var item in source)
-                {
-                    item.Show();
-                }
-            }
+            return new List<ISet<T>>();
         }
     }
 }
