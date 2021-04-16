@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace SudokuSolver.Desktop.Extensions
 {
-    public static class KeyExtension
+    public static class KeyExtensions
     {
         public static int ToInt(this Key key) =>
             key switch
