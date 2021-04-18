@@ -44,17 +44,20 @@ namespace SudokuSolver.Core
                 }
             }
 
-            // Solve exact cover problem
+            // GetExactCover
 
             var conditions = new HashSet<ISet<Condition>>(allCells.Select(x => x.GetSatisfiedConditions()));
 
-            var result = _algorithmX.Solve(allConditions, conditions).Select(x => new Cell(x));
+            var exactCover = _algorithmX.GetExactCover(allConditions, conditions);
 
+            if (!exactCover.HasValue)
+            {
+                throw new ArgumentException("There is no one solution.");
+            }
 
             // Concat known cells and result
             
-
-            return new HashSet<Cell>(result.Concat(knownCells));
+            return new HashSet<Cell>(exactCover.Value.Select(x => new Cell(x)).Concat(knownCells));
 
 
             ISet<Cell> GetAllCells()

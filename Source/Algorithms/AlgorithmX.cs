@@ -1,17 +1,30 @@
-﻿using Algorithms.Contracts;
+﻿using System;
+using Algorithms.Contracts;
 using Algorithms.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Algorithms.Extensions;
+using SuccincT.Options;
 
+[assembly: InternalsVisibleTo("Algorithms.Tests")]
 namespace Algorithms
 {
     internal sealed class AlgorithmX : IAlgorithmX
     {
-        public ICollection<ISet<T>> Solve<T>(ISet<T> setX, ICollection<ISet<T>> collectionS) =>
-            GetSolution(new IncidenceMatrix<T>(setX, collectionS));
+        public Option<ICollection<ISet<T>>> GetExactCover<T>(ISet<T> setX, ICollection<ISet<T>> collectionS)
+        {
+            if (collectionS.Any(x => x.Any(y => !setX.Contains(y))))
+            {
+                throw new ArgumentException(message: "One or more of subsets elements do not consist in the basic set X");
+            }
 
-        private static ICollection<ISet<T>> GetSolution<T>(IncidenceMatrix<T> incidenceMatrix) //TODO add exceptions handling
+            var exactCover = GetExactCover(incidenceMatrix: new IncidenceMatrix<T>(setX, collectionS));
+
+            return exactCover.Count != 0 ? Option<ICollection<ISet<T>>>.Some(exactCover) : Option<ICollection<ISet<T>>>.None();
+        }
+
+        private static ICollection<ISet<T>> GetExactCover<T>(IncidenceMatrix<T> incidenceMatrix) //TODO add exceptions handling
         {
             if (incidenceMatrix.VisibleRows.Any())
             {
@@ -30,7 +43,7 @@ namespace Algorithms
                         return new List<ISet<T>> { row.Items };
                     }
 
-                    var solution = GetSolution(incidenceMatrix);
+                    var solution = GetExactCover(incidenceMatrix);
 
                     if (solution.Count > 0)
                     {
