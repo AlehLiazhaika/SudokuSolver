@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EnsureThat;
 
-namespace SudokuSolver.Core.Contracts.Models
+namespace SudokuSolver.Core.Models
 {
     public class Cell
     {
@@ -44,12 +45,22 @@ namespace SudokuSolver.Core.Contracts.Models
 
         public ISet<Condition> GetSatisfiedConditions() =>
             new HashSet<Condition>(
-                new Condition[]
+                new[]
                 {
                     new Condition(ConditionType.Row, (Row, Value)),
                     new Condition(ConditionType.Column, (Column, Value)),
                     new Condition(ConditionType.Cell, (Row, Column)),
                     new Condition(ConditionType.Box, (Box, Value))
                 });
+
+        public override bool Equals(object obj) => Equals(obj as Cell);
+
+        public bool Equals(Cell cell) =>
+            cell != null &&
+            Row == cell.Row &&
+            Column == cell.Column &&
+            Value == cell.Value;
+
+        public override int GetHashCode() => HashCode.Combine(Row, Column, Value);
     }
 }

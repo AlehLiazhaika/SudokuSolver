@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Algorithms.Tests.xUnit.EqualityComparers
+namespace Common.EqualityComparers
 {
-    internal sealed class SetEqualityComparer<T> : IEqualityComparer<ISet<T>>
+    public sealed class SetEqualityComparer<T> : IEqualityComparer<ISet<T>>
     {
         public static IEqualityComparer<ISet<T>> Instance { get; } = new SetEqualityComparer<T>();
 

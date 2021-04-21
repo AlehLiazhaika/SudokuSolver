@@ -9,8 +9,4 @@
     <PackageReference Include="SuccincT" Version="4.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Algorithms.Contracts\Algorithms.Contracts.csproj" />
-  </ItemGroup>
-
 </Project>

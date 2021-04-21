@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SuccincT.Options;
 
-namespace Algorithms.Contracts
+namespace Algorithms
 {
     public interface IAlgorithmX
     {

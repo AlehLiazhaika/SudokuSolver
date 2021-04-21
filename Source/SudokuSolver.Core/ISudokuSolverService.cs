@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using SudokuSolver.Core.Contracts.Models;
+using SudokuSolver.Core.Models;
 
-namespace SudokuSolver.Core.Contracts
+namespace SudokuSolver.Core
 {
     public interface ISudokuSolverService
     {

@@ -5,8 +5,8 @@ using System.Windows.Input;
 using EnsureThat;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using SudokuSolver.Core.Contracts;
-using SudokuSolver.Core.Contracts.Models;
+using SudokuSolver.Core;
+using SudokuSolver.Core.Models;
 using SudokuSolver.Desktop.Extensions;
 using SudokuSolver.Desktop.ViewModels;
 

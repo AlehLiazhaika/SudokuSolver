@@ -1,7 +1,7 @@
 ﻿using System;
 using EnsureThat;
 
-namespace SudokuSolver.Core.Contracts.Models
+namespace SudokuSolver.Core.Models
 {
     public enum ConditionType
     {

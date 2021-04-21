@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Algorithms.Tests.xUnit.EqualityComparers;
+using Common.EqualityComparers;
 using SuccincT.Options;
 using Xunit;
 
-namespace Algorithms.Tests.xUnit
+namespace Algorithms.Tests
 {
     public class AlgorithmXTests
     {
@@ -13,7 +13,7 @@ namespace Algorithms.Tests.xUnit
         public AlgorithmXTests() => _algorithmX = new AlgorithmX();
 
         [Fact]
-        public void Solve_SubsetsWithNoExactCover_None()
+        public void GetExactCover_SubsetsWithNoExactCover_None()
         {
             // Arrange
             var setX = new HashSet<int>(new[] { 1, 2, 3, 4 });
@@ -35,7 +35,7 @@ namespace Algorithms.Tests.xUnit
         }
 
         [Fact]
-        public void Solve_SubsetsWithSingleExactCover_ExactCover()
+        public void GetExactCover_SubsetsWithSingleExactCover_ExactCover()
         {
             // Arrange
             var setX = new HashSet<int>(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 });
@@ -64,7 +64,7 @@ namespace Algorithms.Tests.xUnit
         }
 
         [Fact]
-        public void Solve_SubsetsWithMultipleExactCover_FirstExactCover()
+        public void GetExactCover_SubsetsWithMultipleExactCover_FirstExactCover()
         {
             // Arrange
             var setX = new HashSet<int>(new[] { 1, 2, 3, 4, 5, 6 });
@@ -92,7 +92,7 @@ namespace Algorithms.Tests.xUnit
         }
 
         [Fact]
-        public void Solve_SubsetsWithStringElements_ExactCover()
+        public void GetExactCover_SubsetsWithStringElements_ExactCover()
         {
             // Arrange
             var setX = new HashSet<string>(new[]
@@ -131,7 +131,7 @@ namespace Algorithms.Tests.xUnit
         }
 
         [Fact]
-        public void Solve_SubsetsWithInvalidElements_ThrowsArgumentException()
+        public void GetExactCover_SubsetsWithInvalidElements_ThrowsArgumentException()
         {
             // Arrange
             var setX = new HashSet<int>(new[] { 1, 2, 3, 4, 5 });

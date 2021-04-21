@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver.Desktop", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver.Core", "..\Source\SudokuSolver.Core\SudokuSolver.Core.csproj", "{588B0AC2-A65E-48B8-AAA3-092AA26057C6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver.Core.Contracts", "..\Source\SudokuSolver.Core.Contracts\SudokuSolver.Core.Contracts.csproj", "{5CDC5C39-A018-49DD-8272-2BD7F30B2424}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms", "..\Source\Algorithms\Algorithms.csproj", "{4B895AB0-2798-48FD-A2A3-7C91CED9C137}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms.Contracts", "..\Source\Algorithms.Contracts\Algorithms.Contracts.csproj", "{06B0A9E3-BC1A-4206-A58C-A4F9D3E8FCC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms.Tests", "..\Source\Algorithms.Tests\Algorithms.Tests.csproj", "{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms.Tests", "..\Source\Algorithms.Tests.xUnit\Algorithms.Tests.csproj", "{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "..\Source\Common\Common.csproj", "{5DC8B641-704C-4E25-B968-5E701D5C0713}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SudokuSolver.Core.Tests", "..\Source\SudokuSolver.Core.Tests\SudokuSolver.Core.Tests.csproj", "{4DD2DC58-FD07-4BFE-BE26-68843DAC6803}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,22 +29,22 @@ Global
 		{588B0AC2-A65E-48B8-AAA3-092AA26057C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{588B0AC2-A65E-48B8-AAA3-092AA26057C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{588B0AC2-A65E-48B8-AAA3-092AA26057C6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5CDC5C39-A018-49DD-8272-2BD7F30B2424}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CDC5C39-A018-49DD-8272-2BD7F30B2424}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CDC5C39-A018-49DD-8272-2BD7F30B2424}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CDC5C39-A018-49DD-8272-2BD7F30B2424}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B895AB0-2798-48FD-A2A3-7C91CED9C137}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B895AB0-2798-48FD-A2A3-7C91CED9C137}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B895AB0-2798-48FD-A2A3-7C91CED9C137}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B895AB0-2798-48FD-A2A3-7C91CED9C137}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06B0A9E3-BC1A-4206-A58C-A4F9D3E8FCC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06B0A9E3-BC1A-4206-A58C-A4F9D3E8FCC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06B0A9E3-BC1A-4206-A58C-A4F9D3E8FCC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06B0A9E3-BC1A-4206-A58C-A4F9D3E8FCC5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C7B5D06-2112-42D7-9A9D-D48C2D2BB57A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DC8B641-704C-4E25-B968-5E701D5C0713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DC8B641-704C-4E25-B968-5E701D5C0713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DC8B641-704C-4E25-B968-5E701D5C0713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DC8B641-704C-4E25-B968-5E701D5C0713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DD2DC58-FD07-4BFE-BE26-68843DAC6803}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DD2DC58-FD07-4BFE-BE26-68843DAC6803}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DD2DC58-FD07-4BFE-BE26-68843DAC6803}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DD2DC58-FD07-4BFE-BE26-68843DAC6803}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
 ﻿using Ninject.Modules;
-using SudokuSolver.Core.Contracts;
 
 namespace SudokuSolver.Core
 {

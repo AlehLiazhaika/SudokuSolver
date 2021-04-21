@@ -1,5 +1,4 @@
-﻿using Algorithms.Contracts;
-using Ninject.Modules;
+﻿using Ninject.Modules;
 
 namespace Algorithms
 {

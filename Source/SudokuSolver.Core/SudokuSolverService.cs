@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Algorithms.Contracts;
+using System.Runtime.CompilerServices;
+using Algorithms;
 using EnsureThat;
-using SudokuSolver.Core.Contracts;
-using SudokuSolver.Core.Contracts.Models;
+using SudokuSolver.Core.Models;
 
+[assembly: InternalsVisibleTo("SudokuSolver.Core.Tests")]
 namespace SudokuSolver.Core
 {
     internal class SudokuSolverService : ISudokuSolverService
@@ -22,86 +23,77 @@ namespace SudokuSolver.Core
         public ISet<Cell> Solve(int dimensionality, ISet<Cell> knownCells)
         {
             Ensure.That(dimensionality, nameof(dimensionality)).IsGt(0);
-
-            var N = (int)Math.Pow(dimensionality, 2);
-            var allCells = GetAllCells();
-            var allConditions = GetAllPossibleConditions();
-
-            // Remove conflict with known
-
-            foreach (var cell in allCells.Where(x => knownCells.Any(x.HasConflictWith)).ToList())
+            Ensure.That(knownCells, nameof(knownCells)).IsNotNull();
+            
+            var cellsForCoverage = GetAllCells(dimensionality);
+            var conditionsForCoverage = GetAllConditions(dimensionality);
+            
+            foreach (var cell in cellsForCoverage.Where(x => knownCells.Any(x.HasConflictWith)).ToList())
             {
-                allCells.Remove(cell);
+                cellsForCoverage.Remove(cell);
             }
-
-            // Remove completed conditions
-
-            foreach (var cell in knownCells)
+            
+            foreach (var condition in knownCells.SelectMany(x => x.GetSatisfiedConditions()))
             {
-                foreach (var condition in cell.GetSatisfiedConditions())
-                {
-                    allConditions.Remove(condition);
-                }
+                conditionsForCoverage.Remove(condition);
             }
+            
+            var availableConditions =
+                new HashSet<ISet<Condition>>(cellsForCoverage.Select(x => x.GetSatisfiedConditions()));
 
-            // GetExactCover
-
-            var conditions = new HashSet<ISet<Condition>>(allCells.Select(x => x.GetSatisfiedConditions()));
-
-            var exactCover = _algorithmX.GetExactCover(allConditions, conditions);
+            var exactCover = _algorithmX.GetExactCover(conditionsForCoverage, availableConditions);
 
             if (!exactCover.HasValue)
             {
                 throw new ArgumentException("There is no one solution.");
             }
-
-            // Concat known cells and result
             
             return new HashSet<Cell>(exactCover.Value.Select(x => new Cell(x)).Concat(knownCells));
+        }
 
+        private static ISet<Cell> GetAllCells(int dimensionality)
+        {
+            var fieldSize = (int)Math.Pow(dimensionality, 2);
+            var result = new HashSet<Cell>((int)Math.Pow(fieldSize, 3));
 
-            ISet<Cell> GetAllCells()
+            for (int i = 0; i < fieldSize; ++i)
             {
-                var result = new HashSet<Cell>((int)Math.Pow(N, 3));
-
-                for (int i = 0; i < N; ++i)
+                for (int j = 0; j < fieldSize; ++j)
                 {
-                    for (int j = 0; j < N; ++j)
+                    for (int k = 1; k <= fieldSize; ++k)
                     {
-                        for (int k = 1; k <= N; ++k)
+                        result.Add(new Cell(dimensionality, (i, j, k)));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private static ISet<Condition> GetAllConditions(int dimensionality)
+        {
+            var fieldSize = (int)Math.Pow(dimensionality, 2);
+            var result = new HashSet<Condition>(4 * fieldSize);
+
+            for (int i = 0; i < 4; ++i)
+            {
+                for (int j = 0; j < fieldSize; ++j)
+                {
+                    for (int k = 0; k < fieldSize; ++k)
+                    {
+                        if ((ConditionType)i != ConditionType.Cell)
                         {
-                            result.Add(new Cell(dimensionality, (i, j, k)));
+                            result.Add(new Condition((ConditionType)i, (j, k + 1)));
+                        }
+                        else
+                        {
+                            result.Add(new Condition((ConditionType)i, (j, k)));
                         }
                     }
                 }
-
-                return result;
             }
 
-            ISet<Condition> GetAllPossibleConditions()
-            {
-                var result = new HashSet<Condition>(4 * N);
-
-                for (int i = 0; i < 4; ++i)
-                {
-                    for (int j = 0; j < N; ++j)
-                    {
-                        for (int k = 0; k < N; ++k)
-                        {
-                            if ((ConditionType)i != ConditionType.Cell)
-                            {
-                                result.Add(new Condition((ConditionType)i, (j, k + 1)));
-                            }
-                            else
-                            {
-                                result.Add(new Condition((ConditionType)i, (j, k)));
-                            }
-                        }
-                    }
-                }
-
-                return result;
-            }
+            return result;
         }
     }
 }

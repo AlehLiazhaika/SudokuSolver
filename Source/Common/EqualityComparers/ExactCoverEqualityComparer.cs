@@ -4,9 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SuccincT.Options;
 
-namespace Algorithms.Tests.xUnit.EqualityComparers
+namespace Common.EqualityComparers
 {
-    internal sealed class ExactCoverEqualityComparer<T> : IEqualityComparer<Option<ICollection<ISet<T>>>>
+    public sealed class ExactCoverEqualityComparer<T> : IEqualityComparer<Option<ICollection<ISet<T>>>>
     {
         public static IEqualityComparer<Option<ICollection<ISet<T>>>> Instance { get; } = new ExactCoverEqualityComparer<T>();
 
