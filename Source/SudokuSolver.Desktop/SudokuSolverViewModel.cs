@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using EnsureThat;
@@ -19,10 +21,10 @@ namespace SudokuSolver.Desktop
         [Reactive] public bool IsBusy { get; set; }
         public List<List<CellViewModel>> Field { get; set; }
 
-        public ICommand SolveCommand { get; }
-        public ICommand SetValuesCommand { get; }
-        public ICommand ClearCellsCommand { get; }
-        public ICommand ClearFieldCommand { get; }
+        public ReactiveCommand<Unit, Unit> SolveCommand { get; }
+        public ReactiveCommand<Key, Unit> SetValuesCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearCellsCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearFieldCommand { get; }
 
         public SudokuSolverViewModel(ISudokuSolverService sudokuSolverService)
         {
@@ -30,10 +32,12 @@ namespace SudokuSolver.Desktop
 
             _sudokuSolverService = sudokuSolverService;
 
-            SolveCommand = ReactiveCommand.Create(Solve);
+            SolveCommand = ReactiveCommand.CreateFromTask(async () => await Task.Run(Solve));
             SetValuesCommand = ReactiveCommand.Create<Key>(key => SetValues(key.ToInt()));
             ClearCellsCommand = ReactiveCommand.Create(ClearCells);
             ClearFieldCommand = ReactiveCommand.Create(ClearField);
+
+            SolveCommand.IsExecuting.Subscribe(x => IsBusy = x);
 
             InitializeField();
         }
@@ -53,26 +57,21 @@ namespace SudokuSolver.Desktop
             }
         }
 
-        private async Task Solve() // TODO Refactor
+        private void Solve()
         {
-            IsBusy = true; // TODO Remake
-
             var filledCells = 
                 Field
                     .SelectMany(x => x)
                     .Where(x => x.Value > 0)
                     .Select(x => new Cell(3, x.Row, x.Column, x.Value))
-                    .ToList();
+                    .ToHashSet();
 
-            var result =
-                await Task.Run(() => _sudokuSolverService.Solve(dimensionality: 3, new HashSet<Cell>(filledCells)));
+            var result = _sudokuSolverService.Solve(dimensionality: 3, filledCells);
 
             foreach (var cell in result)
             {
                 Field[cell.Row][cell.Column].Value = cell.Value;
             }
-
-            IsBusy = false;
         }
 
         private void SetValues(int value)
