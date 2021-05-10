@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using EnsureThat;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Serilog;
 using SudokuSolver.Core;
 using SudokuSolver.Core.Models;
 using SudokuSolver.Desktop.Extensions;
@@ -16,6 +18,7 @@ namespace SudokuSolver.Desktop
 {
     public class SudokuSolverViewModel : ReactiveObject
     {
+        private readonly ILogger _logger;
         private readonly ISudokuSolverService _sudokuSolverService;
 
         [Reactive] public bool IsBusy { get; set; }
@@ -26,10 +29,12 @@ namespace SudokuSolver.Desktop
         public ReactiveCommand<Unit, Unit> ClearCellsCommand { get; }
         public ReactiveCommand<Unit, Unit> ClearFieldCommand { get; }
 
-        public SudokuSolverViewModel(ISudokuSolverService sudokuSolverService)
+        public SudokuSolverViewModel(ILogger logger, ISudokuSolverService sudokuSolverService)
         {
+            Ensure.That(logger, nameof(logger)).IsNotNull();
             Ensure.That(sudokuSolverService, nameof(sudokuSolverService)).IsNotNull();
 
+            _logger = logger;
             _sudokuSolverService = sudokuSolverService;
 
             SolveCommand = ReactiveCommand.CreateFromTask(async () => await Task.Run(Solve));
@@ -59,18 +64,28 @@ namespace SudokuSolver.Desktop
 
         private void Solve()
         {
-            var filledCells = 
-                Field
-                    .SelectMany(x => x)
-                    .Where(x => x.Value > 0)
-                    .Select(x => new Cell(3, x.Row, x.Column, x.Value))
-                    .ToHashSet();
-
-            var result = _sudokuSolverService.Solve(dimensionality: 3, filledCells);
-
-            foreach (var cell in result)
+            try
             {
-                Field[cell.Row][cell.Column].Value = cell.Value;
+                var filledCells =
+                    Field
+                        .SelectMany(x => x)
+                        .Where(x => x.Value > 0)
+                        .Select(x => new Cell(3, x.Row, x.Column, x.Value))
+                        .ToHashSet();
+
+                var result = _sudokuSolverService.Solve(dimensionality: 3, filledCells);
+
+                foreach (var cell in result)
+                {
+                    Field[cell.Row][cell.Column].Value = cell.Value;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                _logger.Error(e.Message);
+                _logger.Error(e.StackTrace);
+                ClearField();
             }
         }
 
