@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using EnsureThat;
+using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
-using Serilog;
 using SudokuSolver.Core;
 using SudokuSolver.Core.Models;
 using SudokuSolver.Desktop.Extensions;
@@ -83,8 +83,7 @@ namespace SudokuSolver.Desktop
             catch (Exception e)
             {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                _logger.Error(e.Message);
-                _logger.Error(e.StackTrace);
+                _logger.Error(e.ToString);
                 ClearField();
             }
         }

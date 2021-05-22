@@ -29,8 +29,6 @@
     <Window.Resources>
 
         <!--  Converters  -->
-        <converters:CellContentConverter x:Key="CellContentConverter" />
-        <converters:MarginConverter x:Key="MarginConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <!--  Styles  -->
@@ -88,16 +86,16 @@
         <DataTemplate x:Key="ItemTemplate">
             <ToggleButton Height="50"
                           Width="50"
-                          Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource MarginConverter}, ConverterParameter=Cell}"
+                          Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={converters:MarginConverter}, ConverterParameter=Cell}"
                           FontFamily="Microsoft JhengHei Light"
                           FontSize="35"
                           Style="{DynamicResource CellStyle}"
                           IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                          Content="{Binding Value, Converter={StaticResource CellContentConverter}, Mode=TwoWay}" />
+                          Content="{Binding Value, Converter={converters:CellContentConverter}, Mode=TwoWay}" />
         </DataTemplate>
 
         <DataTemplate x:Key="RowDataTemplate">
-            <Grid Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource MarginConverter}, ConverterParameter=Row}">
+            <Grid Margin="{Binding Path=(ItemsControl.AlternationIndex), RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={converters:MarginConverter}, ConverterParameter=Row}">
                 <ItemsControl ItemsSource="{Binding}" ItemTemplate="{DynamicResource ItemTemplate}" AlternationCount="256">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
