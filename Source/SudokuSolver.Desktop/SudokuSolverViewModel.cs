@@ -82,7 +82,12 @@ namespace SudokuSolver.Desktop
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    e.Message,
+                    Properties.Resources.ErrorMessageCaption,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
                 _logger.Error(e.ToString);
                 ClearField();
             }
