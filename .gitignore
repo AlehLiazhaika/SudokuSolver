@@ -1,5 +1,8 @@
 bin
 obj
+SudokuSolverBuilds
+PublishProfiles
+
 *.log
 *.csproj.user
 
