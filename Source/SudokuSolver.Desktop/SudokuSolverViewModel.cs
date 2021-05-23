@@ -1,164 +1,123 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using EnsureThat;
+using NLog;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SudokuSolver.Core;
 using SudokuSolver.Core.Models;
+using SudokuSolver.Desktop.Extensions;
 using SudokuSolver.Desktop.ViewModels;
 
 namespace SudokuSolver.Desktop
 {
     public class SudokuSolverViewModel : ReactiveObject
     {
+        private readonly ILogger _logger;
+        private readonly ISudokuSolverService _sudokuSolverService;
+
         [Reactive] public bool IsBusy { get; set; }
-        public List<List<CellViewModel>> Items { get; set; }
-        public SudokuSolver.Core.SudokuSolver SudokuSolver = new SudokuSolver.Core.SudokuSolver(3, new AlgorithmX.AlgorithmX());
+        public List<List<CellViewModel>> Field { get; set; }
 
-        public ICommand SolveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SolveCommand { get; }
+        public ReactiveCommand<Key, Unit> SetValuesCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearCellsCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClearFieldCommand { get; }
 
-        public ICommand Set1 { get; }
-        public ICommand Set2 { get; }
-        public ICommand Set3 { get; }
-        public ICommand Set4 { get; }
-        public ICommand Set5 { get; }
-        public ICommand Set6 { get; }
-        public ICommand Set7 { get; }
-        public ICommand Set8 { get; }
-        public ICommand Set9 { get; }
-        public ICommand ClearCell { get; }
-        public ICommand ClearAll { get; }
-
-        public SudokuSolverViewModel()
+        public SudokuSolverViewModel(ILogger logger, ISudokuSolverService sudokuSolverService)
         {
+            Ensure.That(logger, nameof(logger)).IsNotNull();
+            Ensure.That(sudokuSolverService, nameof(sudokuSolverService)).IsNotNull();
+
+            _logger = logger;
+            _sudokuSolverService = sudokuSolverService;
+
+            SolveCommand = ReactiveCommand.CreateFromTask(async () => await Task.Run(Solve));
+            SetValuesCommand = ReactiveCommand.Create<Key>(key => SetValues(key.ToInt()));
+            ClearCellsCommand = ReactiveCommand.Create(ClearCells);
+            ClearFieldCommand = ReactiveCommand.Create(ClearField);
+
+            SolveCommand.IsExecuting.Subscribe(x => IsBusy = x);
+
             InitializeField();
+        }
 
+        private void InitializeField()
+        {
+            Field = new List<List<CellViewModel>>();
 
-            SolveCommand = ReactiveCommand.Create(Solve);
+            for (int i = 0; i < 9; ++i)
+            {
+                Field.Add(new List<CellViewModel>());
 
-            Set1 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
+                for (int j = 0; j < 9; ++j)
                 {
-                    cell.Value = 1;
-                    cell.IsSelected = false;
-                }
-            });
-            Set2 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 2;
-                    cell.IsSelected = false;
-                }
-            });
-            Set3 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 3;
-                    cell.IsSelected = false;
-                }
-            });
-            Set4 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 4;
-                    cell.IsSelected = false;
-                }
-            });
-            Set5 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 5;
-                    cell.IsSelected = false;
-                }
-            });
-            Set6 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 6;
-                    cell.IsSelected = false;
-                }
-            });
-            Set7 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 7;
-                    cell.IsSelected = false;
-                }
-            });
-            Set8 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 8;
-                    cell.IsSelected = false;
-                }
-            });
-            Set9 = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 9;
-                    cell.IsSelected = false;
-                }
-            });
-            ClearCell = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x).Where(x => x.IsSelected))
-                {
-                    cell.Value = 0;
-                    cell.IsSelected = false;
-                }
-            });
-            ClearAll = ReactiveCommand.Create(() =>
-            {
-                foreach (var cell in Items.SelectMany(x => x))
-                {
-                    cell.Value = 0;
-                    cell.IsSelected = false;
-                }
-            });
-
-            void InitializeField()
-            {
-                Items = new List<List<CellViewModel>>();
-
-                for (int i = 0; i < 9; ++i)
-                {
-                    Items.Add(new List<CellViewModel>());
-
-                    for (int j = 0; j < 9; ++j)
-                    {
-                        Items[i].Add(new CellViewModel(3, i, j, 0));
-                    }
+                    Field[i].Add(new CellViewModel(boxDimensionality: 3, row: i, column: j, value: 0));
                 }
             }
         }
 
-        public async Task Solve()
+        private void Solve()
         {
-            IsBusy = true; // TODO Remake, non-editable cells
-
-            var filledCells = Items
-                .SelectMany(x => x)
-                .Where(x => x.Value > 0)
-                .Select(x => new Cell(3, x.Row, x.Column, x.Value))
-                .ToList();
-
-            var result = await Task.Run(() => SudokuSolver.Solve(new HashSet<Cell>(filledCells)));
-
-            foreach (var cell in result)
+            try
             {
-                Items[cell.Row][cell.Column].Value = cell.Value;
-            }
+                var filledCells =
+                    Field
+                        .SelectMany(x => x)
+                        .Where(x => x.Value > 0)
+                        .Select(x => new Cell(3, x.Row, x.Column, x.Value))
+                        .ToHashSet();
 
-            IsBusy = false;
+                var result = _sudokuSolverService.Solve(dimensionality: 3, filledCells);
+
+                foreach (var cell in result)
+                {
+                    Field[cell.Row][cell.Column].Value = cell.Value;
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(
+                    e.Message,
+                    Properties.Resources.ErrorMessageCaption,
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+                _logger.Error(e.ToString);
+                ClearField();
+            }
+        }
+
+        private void SetValues(int value)
+        {
+            foreach (var cell in Field.SelectMany(x => x).Where(x => x.IsSelected))
+            {
+                cell.Value = value;
+                cell.Deselect();
+            }
+        }
+
+        private void ClearCells()
+        {
+            foreach (var cell in Field.SelectMany(x => x).Where(x => x.IsSelected))
+            {
+                cell.Clear();
+                cell.Deselect();
+            }
+        }
+
+        private void ClearField()
+        {
+            foreach (var cell in Field.SelectMany(x => x))
+            {
+                cell.Clear();
+                cell.Deselect();
+            }
         }
     }
 }

@@ -1,16 +1,14 @@
-﻿using System.Windows;
-
-namespace SudokuSolver.Desktop
+﻿namespace SudokuSolver.Desktop
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        public MainWindow()
+        public MainWindow(SudokuSolverViewModel sudokuSolverViewModel)
         {
             InitializeComponent();
-            DataContext = new SudokuSolverViewModel();
+            DataContext = sudokuSolverViewModel;
         }
     }
 }

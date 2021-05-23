@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EnsureThat;
 
@@ -29,7 +30,7 @@ namespace SudokuSolver.Core.Models
         {
         }
 
-        internal Cell(ISet<Condition> conditions)
+        public Cell(ISet<Condition> conditions)
         {
             Ensure.That(conditions, nameof(conditions)).IsNotNull();
             Ensure.Collection.SizeIs(conditions, 4);
@@ -42,14 +43,24 @@ namespace SudokuSolver.Core.Models
 
         public bool HasConflictWith(Cell cell) => GetSatisfiedConditions().Intersect(cell.GetSatisfiedConditions()).Any();
 
-        internal ISet<Condition> GetSatisfiedConditions() =>
+        public ISet<Condition> GetSatisfiedConditions() =>
             new HashSet<Condition>(
-                new Condition[]
+                new[]
                 {
                     new Condition(ConditionType.Row, (Row, Value)),
                     new Condition(ConditionType.Column, (Column, Value)),
                     new Condition(ConditionType.Cell, (Row, Column)),
                     new Condition(ConditionType.Box, (Box, Value))
                 });
+
+        public override bool Equals(object obj) => Equals(obj as Cell);
+
+        public bool Equals(Cell cell) =>
+            cell != null &&
+            Row == cell.Row &&
+            Column == cell.Column &&
+            Value == cell.Value;
+
+        public override int GetHashCode() => HashCode.Combine(Row, Column, Value);
     }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows.Data;
 
 namespace SudokuSolver.Desktop.Converters
 {
-    public class CellContentConverter : IValueConverter // TODO Use MarkupExtension
+    public class CellContentConverter : ValueConverterBase<CellContentConverter>
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
             {
@@ -15,8 +14,5 @@ namespace SudokuSolver.Desktop.Converters
 
             return (int) value == 0 ? string.Empty : ((int) value).ToString();
         }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
-            throw new NotImplementedException();
     }
 }

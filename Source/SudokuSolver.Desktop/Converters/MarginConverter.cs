@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 
 namespace SudokuSolver.Desktop.Converters
 {
-    public class MarginConverter : IValueConverter
+    public class MarginConverter : ValueConverterBase<MarginConverter>
     {
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
             {
@@ -25,9 +23,5 @@ namespace SudokuSolver.Desktop.Converters
 
             static bool IsEdgeIndex(int index) => index % 3 == 2;
         }
-
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
-            throw new NotImplementedException();
     }
 }
